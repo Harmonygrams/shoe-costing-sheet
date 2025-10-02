@@ -17,7 +17,8 @@ interface ProductFormProps {
 
 export function ProductForm({ product, onSubmit, onCancel }: ProductFormProps) {
   const [name, setName] = useState(product?.name || "")
-  const [photo, setPhoto] = useState(product?.photo || "")
+  const [photo, setPhoto] = useState<string | undefined>(product?.photo || undefined)
+  const [uploadError, setUploadError] = useState<string>("")
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -25,13 +26,13 @@ export function ProductForm({ product, onSubmit, onCancel }: ProductFormProps) {
 
     onSubmit({
       name: name.trim(),
-      photo: photo.trim() || undefined,
+      photo,
     })
 
     if (!product) {
       // Reset form for new products
       setName("")
-      setPhoto("")
+      setPhoto(undefined)
     }
   }
 
@@ -54,17 +55,38 @@ export function ProductForm({ product, onSubmit, onCancel }: ProductFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="photo">Photo URL (Optional)</Label>
+            <Label htmlFor="photo">Product Image (max 5MB)</Label>
             <Input
               id="photo"
-              type="url"
-              value={photo}
-              onChange={(e) => setPhoto(e.target.value)}
-              placeholder="https://example.com/photo.jpg"
+              type="file"
+              accept="image/*"
+              onChange={async (e) => {
+                const file = e.target.files?.[0]
+                setUploadError("")
+                if (!file) return
+                if (file.size > 5 * 1024 * 1024) {
+                  setUploadError("File too large. Max 5MB.")
+                  e.target.value = ""
+                  return
+                }
+                const reader = new FileReader()
+                reader.onload = () => {
+                  const result = reader.result as string
+                  setPhoto(result)
+                }
+                reader.onerror = () => setUploadError("Failed to read file")
+                reader.readAsDataURL(file)
+              }}
             />
+            {uploadError && <p className="text-sm text-destructive">{uploadError}</p>}
+            {photo && (
+              <div className="mt-2">
+                <img src={photo} alt="Preview" className="w-24 h-24 object-cover rounded-md border" />
+              </div>
+            )}
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <Button type="submit">{product ? "Update Product" : "Add Product"}</Button>
             {onCancel && (
               <Button type="button" variant="outline" onClick={onCancel}>

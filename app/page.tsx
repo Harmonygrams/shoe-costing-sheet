@@ -68,7 +68,7 @@ export default function HomePage() {
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="max-w-4xl mx-auto space-y-8">
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex-1">
             <h1 className="text-3xl font-bold">Shoe Costing App</h1>
             <p className="text-muted-foreground">Manage your shoe products and calculate material costs</p>
@@ -79,7 +79,7 @@ export default function HomePage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search products..."
-              className="border rounded-md px-3 py-2 text-sm w-56"
+              className="border rounded-md px-3 py-2 text-sm w-full md:w-56"
             />
             {!showForm && !editingProduct && (
               <Button onClick={() => setShowForm(true)}>

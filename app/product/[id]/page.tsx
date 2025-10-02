@@ -105,7 +105,7 @@ export default function ProductDetailPage() {
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="max-w-6xl mx-auto space-y-8">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <Button variant="outline" onClick={() => router.push("/")} size="sm">
               <ArrowLeft className="w-4 h-4 mr-2" />

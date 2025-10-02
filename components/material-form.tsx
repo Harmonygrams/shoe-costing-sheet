@@ -64,7 +64,7 @@ export function MaterialForm({ productId, material, onSubmit, onCancel }: Materi
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="category">Category</Label>
               <Select value={category} onValueChange={setCategory}>
@@ -93,7 +93,7 @@ export function MaterialForm({ productId, material, onSubmit, onCancel }: Materi
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label htmlFor="unit">Unit</Label>
               <Select value={unit} onValueChange={setUnit}>
@@ -139,7 +139,7 @@ export function MaterialForm({ productId, material, onSubmit, onCancel }: Materi
             </div>
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <Button type="submit">{material ? "Update Material" : "Add Material"}</Button>
             {onCancel && (
               <Button type="button" variant="outline" onClick={onCancel}>

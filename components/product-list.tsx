@@ -27,13 +27,13 @@ export function ProductList({ products, onEdit, onDelete, onView }: ProductListP
       {products.map((product) => (
         <Card key={product.id}>
           <CardContent className="p-4">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-4">
                 {product.photo && (
                   <img
                     src={product.photo || "/placeholder.svg"}
                     alt={product.name}
-                    className="w-16 h-16 object-cover rounded-md"
+                    className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-md"
                   />
                 )}
                 <div>
@@ -42,7 +42,7 @@ export function ProductList({ products, onEdit, onDelete, onView }: ProductListP
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <Button size="sm" variant="outline" onClick={() => onView(product)}>
                   <Eye className="w-4 h-4 mr-1" />
                   View
