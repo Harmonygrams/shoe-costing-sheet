@@ -1,11 +1,12 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { dataStore } from "@/lib/data-store"
+import { MongoDBStore } from "@/lib/models"
 
 export async function GET() {
   try {
-    const products = dataStore.getProducts()
+    const products = await MongoDBStore.getProducts()
     return NextResponse.json(products)
   } catch (error) {
+    console.error("[v0] Error fetching products:", error)
     return NextResponse.json({ error: "Failed to fetch products" }, { status: 500 })
   }
 }
@@ -19,9 +20,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Name is required" }, { status: 400 })
     }
 
-    const product = dataStore.addProduct({ name, photo })
+    const product = await MongoDBStore.addProduct({ name, photo })
     return NextResponse.json(product, { status: 201 })
   } catch (error) {
+    console.error("[v0] Error creating product:", error)
     return NextResponse.json({ error: "Failed to create product" }, { status: 500 })
   }
 }

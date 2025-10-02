@@ -14,6 +14,7 @@ export interface Material {
   unit: string
   quantity: number
   unitCost: number
+  totalCost: number
   createdAt: Date
   updatedAt: Date
 }
@@ -25,34 +26,60 @@ export interface CostingBreakdown {
 }
 
 export type MaterialCategory =
-  | "Upper Materials"
+  | "Upper Making"
   | "Sole Materials"
   | "Hardware"
   | "Lining"
   | "Adhesives"
   | "Packaging"
+  | "Leather"
+  | "Eyelets"
+  | "Thread"
+  | "Chemical sheet"
+  | "Insole"
+  | "Insock"
+  | "Glue" 
+  | "Lace" 
+  | "Shoe lasting"  
+  | "Shoe Finishing"
+  | "Shoe box"
+  | "Shoe box"
   | "Other"
+  
 
 export const MATERIAL_CATEGORIES: MaterialCategory[] = [
-  "Upper Materials",
+  "Upper Making",
   "Sole Materials",
   "Hardware",
   "Lining",
   "Adhesives",
   "Packaging",
+  "Leather",
+  "Eyelets",
+  "Thread",
+  "Chemical sheet",
+  "Insole",
+  "Insock",
+  "Glue",
+  "Lace",
+  "Shoe lasting",
+  "Shoe Finishing",
+  "Shoe box",
   "Other",
 ]
 
 export const COMMON_UNITS = [
-  "pieces",
+  "sqft",
+  "gallon",
   "pairs",
   "meters",
+  "pieces",
   "cm",
   "grams",
   "kg",
   "ml",
   "liters",
-  "gallon",
   "yards",
   "feet",
+  "sqm",
 ]

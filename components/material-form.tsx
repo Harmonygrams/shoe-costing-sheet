@@ -115,8 +115,8 @@ export function MaterialForm({ productId, material, onSubmit, onCancel }: Materi
               <Input
                 id="quantity"
                 type="number"
-                step="0.01"
-                min="0.01"
+                step="0.0000001"
+                min="0"
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
                 placeholder="0.00"

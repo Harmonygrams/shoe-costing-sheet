@@ -1,15 +1,15 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { dataStore } from "@/lib/data-store"
+import { MongoDBStore } from "@/lib/models"
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const product = dataStore.getProduct(params.id)
+    const product = await MongoDBStore.getProduct(params.id)
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 })
     }
 
-    const materials = dataStore.getMaterials(params.id)
-    const totalMaterialCost = dataStore.calculateProductCost(params.id)
+    const materials = await MongoDBStore.getMaterials(params.id)
+    const totalMaterialCost = await MongoDBStore.calculateProductCost(params.id)
 
     // Calculate additional costs
     const laborCostPercentage = 0.3
@@ -31,6 +31,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
     return NextResponse.json(costingBreakdown)
   } catch (error) {
+    console.error("[v0] Error calculating costing:", error)
     return NextResponse.json({ error: "Failed to calculate costing" }, { status: 500 })
   }
 }

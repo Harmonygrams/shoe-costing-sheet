@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Download, Printer } from "lucide-react"
 import type { Product, Material } from "@/lib/types"
 import { formatCurrency } from "@/lib/currency"
-import { useState } from "react"
+import { useMemo, useState } from "react"
 
 interface CostingSheetProps {
   product: Product
@@ -21,10 +21,19 @@ export function CostingSheet({ product, materials }: CostingSheetProps) {
   const [quantity, setQuantity] = useState(1)
   const [overheadPercentage, setOverheadPercentage] = useState(15)
   const [laborPercentage, setLaborPercentage] = useState(30)
+  const [materialSearch, setMaterialSearch] = useState("")
+  const [wholesaleMultiplier, setWholesaleMultiplier] = useState(1.8)
+  const [retailMultiplier, setRetailMultiplier] = useState(2.5)
 
   const totalMaterialCost = materials.reduce((sum, material) => sum + material.quantity * material.unitCost, 0)
 
-  const materialsByCategory = materials.reduce(
+  const filteredMaterials = useMemo(() => {
+    const q = materialSearch.trim().toLowerCase()
+    if (!q) return materials
+    return materials.filter((m) => m.name.toLowerCase().includes(q))
+  }, [materials, materialSearch])
+
+  const materialsByCategory = filteredMaterials.reduce(
     (acc, material) => {
       if (!acc[material.category]) {
         acc[material.category] = []
@@ -85,11 +94,11 @@ export function CostingSheet({ product, materials }: CostingSheetProps) {
 
       {/* Production Parameters */}
       <Card>
-        <CardHeader>
-          <CardTitle>Production Parameters</CardTitle>
-        </CardHeader>
+            <CardHeader>
+              <CardTitle>Production Parameters</CardTitle>
+            </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="space-y-2">
               <Label htmlFor="quantity">Quantity (Pairs)</Label>
               <Input
@@ -127,12 +136,36 @@ export function CostingSheet({ product, materials }: CostingSheetProps) {
                 className="w-full"
               />
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="material-search">Search Materials</Label>
+              <Input
+                id="material-search"
+                placeholder="Filter by name"
+                value={materialSearch}
+                onChange={(e) => setMaterialSearch(e.target.value)}
+                className="w-full"
+              />
+            </div>
           </div>
         </CardContent>
       </Card>
 
+      {/* Material search above tables */}
+      <div className="space-y-2">
+        <div className="space-y-2">
+          <Label htmlFor="material-search-inline">Search Materials</Label>
+          <Input
+            id="material-search-inline"
+            placeholder="Filter by name"
+            value={materialSearch}
+            onChange={(e) => setMaterialSearch(e.target.value)}
+            className="w-full max-w-sm"
+          />
+        </div>
+      </div>
+
       {/* Material Breakdown by Category */}
-      <div className="space-y-4">
+      <div className="space-y-4 mt-2">
         {categoryTotals.map(({ category, total, materials: categoryMaterials }) => (
           <Card key={category}>
             <CardHeader>
@@ -210,7 +243,7 @@ export function CostingSheet({ product, materials }: CostingSheetProps) {
 
           <Separator />
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pt-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-primary">{formatCurrency(costPerPair)}</div>
               <div className="text-sm text-muted-foreground">Material Cost per Pair</div>
@@ -221,9 +254,35 @@ export function CostingSheet({ product, materials }: CostingSheetProps) {
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-green-600">
-                {formatCurrency(totalProductionCostPerUnit * 2.5)}
+                {formatCurrency(totalProductionCostPerUnit * retailMultiplier)}
               </div>
-              <div className="text-sm text-muted-foreground">Suggested Retail (2.5x)</div>
+              <div className="text-sm text-muted-foreground">Suggested Retail ({retailMultiplier}x)</div>
+              <div className="mt-2">
+                <Input
+                  type="number"
+                  min="1"
+                  step="0.1"
+                  value={retailMultiplier}
+                  onChange={(e) => setRetailMultiplier(Math.max(1, Number.parseFloat(e.target.value) || 1))}
+                  className="w-24 mx-auto text-center"
+                />
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-amber-600">
+                {formatCurrency(totalProductionCostPerUnit * wholesaleMultiplier)}
+              </div>
+              <div className="text-sm text-muted-foreground">Suggested Wholesale ({wholesaleMultiplier}x)</div>
+              <div className="mt-2">
+                <Input
+                  type="number"
+                  min="1"
+                  step="0.1"
+                  value={wholesaleMultiplier}
+                  onChange={(e) => setWholesaleMultiplier(Math.max(1, Number.parseFloat(e.target.value) || 1))}
+                  className="w-24 mx-auto text-center"
+                />
+              </div>
             </div>
           </div>
         </CardContent>

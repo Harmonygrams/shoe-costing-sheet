@@ -7,13 +7,19 @@ class ApiClient {
   async getProducts(): Promise<Product[]> {
     const response = await fetch(`${this.baseUrl}/products`)
     if (!response.ok) throw new Error("Failed to fetch products")
-    return response.json()
+    const raw = await response.json()
+    return raw.map((p: any) => ({
+      ...p,
+      createdAt: new Date(p.createdAt),
+      updatedAt: p.updatedAt ? new Date(p.updatedAt) : new Date(p.createdAt),
+    }))
   }
 
   async getProduct(id: string): Promise<Product> {
     const response = await fetch(`${this.baseUrl}/products/${id}`)
     if (!response.ok) throw new Error("Failed to fetch product")
-    return response.json()
+    const p = await response.json()
+    return { ...p, createdAt: new Date(p.createdAt), updatedAt: new Date(p.updatedAt ?? p.createdAt) }
   }
 
   async createProduct(data: { name: string; photo?: string }): Promise<Product> {
@@ -23,7 +29,8 @@ class ApiClient {
       body: JSON.stringify(data),
     })
     if (!response.ok) throw new Error("Failed to create product")
-    return response.json()
+    const p = await response.json()
+    return { ...p, createdAt: new Date(p.createdAt), updatedAt: new Date(p.updatedAt ?? p.createdAt) }
   }
 
   async updateProduct(id: string, data: { name: string; photo?: string }): Promise<Product> {
@@ -33,7 +40,8 @@ class ApiClient {
       body: JSON.stringify(data),
     })
     if (!response.ok) throw new Error("Failed to update product")
-    return response.json()
+    const p = await response.json()
+    return { ...p, createdAt: new Date(p.createdAt), updatedAt: new Date(p.updatedAt ?? p.createdAt) }
   }
 
   async deleteProduct(id: string): Promise<void> {
@@ -47,7 +55,12 @@ class ApiClient {
   async getMaterials(productId: string): Promise<Material[]> {
     const response = await fetch(`${this.baseUrl}/products/${productId}/materials`)
     if (!response.ok) throw new Error("Failed to fetch materials")
-    return response.json()
+    const raw = await response.json()
+    return raw.map((m: any) => ({
+      ...m,
+      createdAt: new Date(m.createdAt),
+      updatedAt: new Date(m.updatedAt ?? m.createdAt),
+    }))
   }
 
   async createMaterial(
@@ -66,7 +79,8 @@ class ApiClient {
       body: JSON.stringify(data),
     })
     if (!response.ok) throw new Error("Failed to create material")
-    return response.json()
+    const m = await response.json()
+    return { ...m, createdAt: new Date(m.createdAt), updatedAt: new Date(m.updatedAt ?? m.createdAt) }
   }
 
   async updateMaterial(
@@ -85,7 +99,8 @@ class ApiClient {
       body: JSON.stringify(data),
     })
     if (!response.ok) throw new Error("Failed to update material")
-    return response.json()
+    const m = await response.json()
+    return { ...m, createdAt: new Date(m.createdAt), updatedAt: new Date(m.updatedAt ?? m.createdAt) }
   }
 
   async deleteMaterial(id: string): Promise<void> {

@@ -1,11 +1,12 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { dataStore } from "@/lib/data-store"
+import { MongoDBStore } from "@/lib/models"
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const materials = dataStore.getMaterials(params.id)
+    const materials = await MongoDBStore.getMaterials(params.id)
     return NextResponse.json(materials)
   } catch (error) {
+    console.error("[v0] Error fetching materials:", error)
     return NextResponse.json({ error: "Failed to fetch materials" }, { status: 500 })
   }
 }
@@ -26,12 +27,12 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     }
 
     // Check if product exists
-    const product = dataStore.getProduct(params.id)
+    const product = await MongoDBStore.getProduct(params.id)
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 })
     }
 
-    const material = dataStore.addMaterial({
+    const material = await MongoDBStore.addMaterial({
       productId: params.id,
       category,
       name,
@@ -42,6 +43,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
 
     return NextResponse.json(material, { status: 201 })
   } catch (error) {
+    console.error("[v0] Error creating material:", error)
     return NextResponse.json({ error: "Failed to create material" }, { status: 500 })
   }
 }
